@@ -1,4 +1,4 @@
-#include "include/s11662.h"
+#include "s11662.h"
 
 /* Mocking wiringPi */
 #define INPUT 0
@@ -6,6 +6,7 @@ void wiringPiSetup(void) {
     return;
 }
 void pinMode(__uint8_t pin, __uint8_t mode) {
+    (pin + mode);
     return;
 }
 
