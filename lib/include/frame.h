@@ -15,6 +15,10 @@ public:
         this->clear();
     };
 
+    ~Frame() {
+        this->frame.release();
+    }
+
     void saveAsPNG(const char* file)
     {
         imwrite(file, this->frame);

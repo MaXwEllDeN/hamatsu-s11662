@@ -1,43 +1,51 @@
 // Requirement: opencv
-// pixel-value.cpp: does something cool
+// grayscale_16.cpp: does something cool
 
 #include <iostream>
 #include <opencv2/core/core.hpp>
+#include <unistd.h> /* usleep */
+#include <stdlib.h> /* srand */
+#include <time.h> /* time */
 #include "frame.h"
 #include "s11662.h"
 
 const char* FRAME_LOCATION = (char *) "output.png";
 
+void print16Binary(int16_t number);
+
 int main(int argc, char* argv[])
 {
-    Frame myFrame;
+    srand (time(NULL));
+    S11662 imageSensor;    
+    Frame* frame = imageSensor.readFrame();
+
+    printf("Frame resolution: %d(H) x %d(V).\n", S11662_RES_H, S11662_RES_V);
 
     cv::namedWindow("Frame", CV_WINDOW_AUTOSIZE);
-    cv::imshow("Frame", myFrame.getMatrix());
+    cv::imshow("Frame", frame->getMatrix());
 
-    int lastX = 0;
-    int lastY = 0;
+    int property = cv::getWindowProperty("Frame", 1);
 
-    while (true) {
-        int readKey = cv::waitKey(1);
-
-        if (readKey == 27) {
-            std::cout << "ESC PRESSED. Bye bye" << std::endl;
-            myFrame.saveAsPNG(FRAME_LOCATION);
+    while (property > 0) {
+        if (!cvGetWindowHandle("Frame") or cv::waitKey(4) == 27) {
             break;
         }
 
-        myFrame.setPixel(lastX, lastY, 65535 / 2);
-        cv::imshow("Frame", myFrame.getMatrix());
+        // WND_PROP_AUTOSIZE = 1
+        property = cv::getWindowProperty("Frame", 1);
 
-        //printf("(%d, %d)\n", lastX, lastY);        
-        lastX++;
-
-        if (lastX > 640) {
-            lastX = 0;
-            lastY++;
-        }
+        // Updates visualization to the newest frame read by the sensor
+        frame = imageSensor.readFrame();
+        cv::imshow("Frame", frame->getMatrix());
     }
-
+    
+    frame->saveAsPNG(FRAME_LOCATION);
     return 0;
+}
+
+void print16Binary(int16_t number)
+{
+    for (uint8_t i = 15; i >= 0; --i) {
+        printf("%d", (number & (0x0001 << i)) >> i);
+    }
 }

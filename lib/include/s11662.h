@@ -15,11 +15,11 @@ public:
         this->setup();
     }
 
-    Frame readFrame(void);
+    Frame* readFrame(void);
 private:
     bool setup(void);
 
-    __uint16_t readPixel(void);
+    uint16_t readPixel(void);
     
     void setNewPixelFlag(bool available) {
         this->newPixelFlag = available;
