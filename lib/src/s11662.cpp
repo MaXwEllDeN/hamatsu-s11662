@@ -1,4 +1,4 @@
-#include "s11662.h"
+#include "../include/s11662.h"
 
 /* Mocking wiringPi */
 #define INPUT 0
